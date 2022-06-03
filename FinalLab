@@ -1,0 +1,46 @@
+!mamba install pandas==1.3.3 -y
+!mamba install requests==2.26.0 -y
+/usr/bin/sh: mamba: command not found
+/usr/bin/sh: mamba: command not found
+import glob
+import pandas as pd
+from datetime import datetime
+!wget https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/IBMDeveloperSkillsNetwork-PY0221EN-SkillsNetwork/labs/module%206/Final%20Assignment/exchange_rates.csv
+def extract_from_csv(file_to_process):
+    dataframe = pd.read_csv(file_to_process)
+    return dataframe
+def extract():
+     extracted_data = pd.DataFrame(columns=['Rates', 'Currency']) 
+     
+     for csvfile in glob.glob("*.csv"):
+        extracted_data = extracted_data.append(extract_from_csv(csvfile), ignore_index=True)
+     return extracted_data
+def log(message):
+    timestamp_format = '%Y-%h-%d-%H:%M:%S' # Year-Monthname-Day-Hour-Minute-Second
+    now = datetime.now() # get current timestamp
+    timestamp = now.strftime(timestamp_format)
+    with open("logfile.txt","a") as f:
+        f.write(timestamp + ',' + message + '\n')
+def transform(data):
+         data['Rates'] = round(data.Rates,2)
+          return data
+log("ETL Job Started")
+log("Extract phase Started")
+extracted_data = extract()
+log("Extract phase Ended")
+df1 = extracted_data.head(5)
+df1
+log("Transform phase Started")
+transformed_data = transform(extracted_data)
+log("Transform phase Ended")
+df2 = transformed_data.head(5)
+df2
+log("Transform phase Started")
+transformed_data = transform(extracted_data)
+log("Transform phase Ended")
+df2 = transformed_data.head(5)
+df2
+log("Load phase Started")
+load(targetfile,transformed_data)
+log("Load phase Ended")
+log("ETL Job Ended")
